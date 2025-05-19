@@ -63,30 +63,23 @@
         
         <!-- Añadir mapas base y capa WFS -->
         <script>
-            // Crear el mapa principal con mapas base
-            var map = new ol.Map({
-                target: 'map',
-                layers: [
-                    new ol.layer.Tile({
-                        title: 'OpenStreetMap',
-                        type: 'base',
-                        source: new ol.source.OSM()
-                    }),
-                    new ol.layer.Tile({
-                        title: 'CartoDB Positron',
-                        type: 'base',
-                        source: new ol.source.XYZ({
-                            url: 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
-                        })
+            // Crear las capas base
+            var baseLayers = [
+                new ol.layer.Tile({
+                    title: 'OpenStreetMap',
+                    type: 'base',
+                    source: new ol.source.OSM()
+                }),
+                new ol.layer.Tile({
+                    title: 'CartoDB Positron',
+                    type: 'base',
+                    source: new ol.source.XYZ({
+                        url: 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
                     })
-                ],
-                view: new ol.View({
-                    center: ol.proj.fromLonLat([-5.161, 36.742]),
-                    zoom: 13
                 })
-            });
+            ];
 
-            // Cargar capa WFS para fuentes ornamentales
+            // Crear fuente WFS para fuentes ornamentales
             var fuentesOrnamentalesSource = new ol.source.Vector({
                 format: new ol.format.GeoJSON(),
                 url: function(extent) {
@@ -95,11 +88,22 @@
                 strategy: ol.loadingstrategy.bbox
             });
 
+            // Crear capa vectorial para fuentes ornamentales
             var fuentesOrnamentalesLayer = new ol.layer.Vector({
                 source: fuentesOrnamentalesSource,
-                style: style_fuentes_ornamentales_NUBE_1
+                style: style_fuentes_ornamentales_NUBE_1,
+                title: 'Fuentes Ornamentales'
             });
 
-            map.addLayer(fuentesOrnamentalesLayer);
+            // Crear el mapa principal
+            var map = new ol.Map({
+                target: 'map',
+                layers: baseLayers.concat([fuentesOrnamentalesLayer]),
+                view: new ol.View({
+                    center: ol.proj.fromLonLat([-5.161, 36.742]),
+                    zoom: 13
+                })
+            });
         </script>
-    </body
+    </body>
+</html>
