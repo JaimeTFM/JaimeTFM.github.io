@@ -90,7 +90,7 @@
             var fuentesOrnamentalesSource = new ol.source.Vector({
                 format: new ol.format.GeoJSON(),
                 url: function(extent) {
-                    return 'https://wms.qgiscloud.com/jaimequinterotfm/QFIELD_RONDA_cloud/?service=WFS&version=2.0.0&request=GetFeature&typename=FUENTES_ORNAMENTALES&outputFormat=application/json&srsname=EPSG:3857';
+                    return 'https://wms.qgiscloud.com/jaimequinterotfm/QFIELD_RONDA_cloud/?service=WFS&version=2.0.0&request=GetFeature&typename=FUENTES_ORNAMENTALES&outputFormat=application/json&srsname=EPSG:4326';
                 },
                 strategy: ol.loadingstrategy.bbox
             });
@@ -102,5 +102,4 @@
 
             map.addLayer(fuentesOrnamentalesLayer);
         </script>
-    </body>
-</html>
+    </body
