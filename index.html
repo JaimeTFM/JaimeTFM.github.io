@@ -61,9 +61,32 @@
         <script src="./resources/Autolinker.min.js"></script>
         <script src="./resources/qgis2web.js"></script>
         
-        <!-- Sustitución del archivo fuentes_ornamentales_NUBE_1.js por WFS -->
+        <!-- Añadir mapas base y capa WFS -->
         <script>
-            // Crear fuente WFS para la capa de fuentes ornamentales
+            // Crear el mapa principal con mapas base
+            var map = new ol.Map({
+                target: 'map',
+                layers: [
+                    new ol.layer.Tile({
+                        title: 'OpenStreetMap',
+                        type: 'base',
+                        source: new ol.source.OSM()
+                    }),
+                    new ol.layer.Tile({
+                        title: 'CartoDB Positron',
+                        type: 'base',
+                        source: new ol.source.XYZ({
+                            url: 'https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
+                        })
+                    })
+                ],
+                view: new ol.View({
+                    center: ol.proj.fromLonLat([-5.161, 36.742]),
+                    zoom: 13
+                })
+            });
+
+            // Cargar capa WFS para fuentes ornamentales
             var fuentesOrnamentalesSource = new ol.source.Vector({
                 format: new ol.format.GeoJSON(),
                 url: function(extent) {
@@ -72,21 +95,9 @@
                 strategy: ol.loadingstrategy.bbox
             });
 
-            // Crear capa vectorial para fuentes ornamentales
             var fuentesOrnamentalesLayer = new ol.layer.Vector({
                 source: fuentesOrnamentalesSource,
-                style: new ol.style.Style({
-                    image: new ol.style.Circle({
-                        radius: 6,
-                        fill: new ol.style.Fill({
-                            color: '#0080ff'
-                        }),
-                        stroke: new ol.style.Stroke({
-                            color: '#ffffff',
-                            width: 2
-                        })
-                    })
-                })
+                style: style_fuentes_ornamentales_NUBE_1
             });
 
             map.addLayer(fuentesOrnamentalesLayer);
