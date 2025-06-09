@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet.wms.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/ZONAS_VERDES_3.js"></script>
+        <script src="data/ARBOLADO_4.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[36.945857599614854,-3.8275790711410598],[36.95215374899043,-3.8152246844858886]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_Positron_0');
+        map.getPane('pane_Positron_0').style.zIndex = 400;
+        var layer_Positron_0 = L.tileLayer('http://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            pane: 'pane_Positron_0',
+            opacity: 1.0,
+            attribution: '<a href="https://cartodb.com/basemaps/">Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL.</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_Positron_0;
+        map.createPane('pane_GooglecnSatellite_1');
+        map.getPane('pane_GooglecnSatellite_1').style.zIndex = 401;
+        var layer_GooglecnSatellite_1 = L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
+            pane: 'pane_GooglecnSatellite_1',
+            opacity: 1.0,
+            attribution: '<a href="https://www.google.com/intl/zh-CN_cn/permissions/geoguidelines/attr-guide.html">地图数据 ©2016 Google</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 21
+        });
+        layer_GooglecnSatellite_1;
+        map.addLayer(layer_GooglecnSatellite_1);
+        map.createPane('pane_Viales_2');
+        map.getPane('pane_Viales_2').style.zIndex = 402;
+        var layer_Viales_2 = L.WMS.layer("http://www.callejerodeandalucia.es/servicios/cdau/wms", "v_vial", {
+            pane: 'pane_Viales_2',
+            format: 'image/png',
+            uppercase: true,
+            transparent: true,
+            continuousWorld : true,
+            tiled: true,
+            info_format: 'text/html',
+            opacity: 1,
+            identify: false,
+            attribution: '',
+        });
+        map.addLayer(layer_Viales_2);
+        function pop_ZONAS_VERDES_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">ID_ZV</th>\
+                        <td class="visible-with-data" id="ID_ZV">' + (feature.properties['ID_ZV'] !== null ? autolinker.link(String(feature.properties['ID_ZV']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">NOMBRE</th>\
+                        <td class="visible-with-data" id="NOMBRE">' + (feature.properties['NOMBRE'] !== null ? autolinker.link(String(feature.properties['NOMBRE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO_ZV</th>\
+                        <td class="visible-with-data" id="TIPO_ZV">' + (feature.properties['TIPO_ZV'] !== null ? autolinker.link(String(feature.properties['TIPO_ZV']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">AREA</th>\
+                        <td class="visible-with-data" id="AREA">' + (feature.properties['AREA'] !== null ? autolinker.link(String(feature.properties['AREA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TIPO_RIEGO</th>\
+                        <td class="visible-with-data" id="TIPO_RIEGO">' + (feature.properties['TIPO_RIEGO'] !== null ? autolinker.link(String(feature.properties['TIPO_RIEGO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ESTADO</th>\
+                        <td class="visible-with-data" id="ESTADO">' + (feature.properties['ESTADO'] !== null ? autolinker.link(String(feature.properties['ESTADO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ACTUACION_PENDIENTE</th>\
+                        <td class="visible-with-data" id="ACTUACION_PENDIENTE">' + (feature.properties['ACTUACION_PENDIENTE'] !== null ? autolinker.link(String(feature.properties['ACTUACION_PENDIENTE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_ZONAS_VERDES_3_0(feature) {
+            switch(String(feature.properties['ESTADO'])) {
+                case 'ORDEN DE EJECUCIÓN':
+                    return {
+                pane: 'pane_ZONAS_VERDES_3',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(193,20,40,0.6549019607843137)',
+                interactive: true,
+            }
+                    break;
+                case 'PROGRAMADO':
+                    return {
+                pane: 'pane_ZONAS_VERDES_3',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(193,118,20,0.6196078431372549)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_ZONAS_VERDES_3',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(20,193,38,0.6196078431372549)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_ZONAS_VERDES_3');
+        map.getPane('pane_ZONAS_VERDES_3').style.zIndex = 403;
+        map.getPane('pane_ZONAS_VERDES_3').style['mix-blend-mode'] = 'normal';
+        var layer_ZONAS_VERDES_3 = new L.geoJson(json_ZONAS_VERDES_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_ZONAS_VERDES_3',
+            layerName: 'layer_ZONAS_VERDES_3',
+            pane: 'pane_ZONAS_VERDES_3',
+            onEachFeature: pop_ZONAS_VERDES_3,
+            style: style_ZONAS_VERDES_3_0,
+        });
+        bounds_group.addLayer(layer_ZONAS_VERDES_3);
+        function pop_ARBOLADO_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">ID</th>\
+                        <td class="visible-with-data" id="ID">' + (feature.properties['ID'] !== null ? autolinker.link(String(feature.properties['ID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ESPECIE</th>\
+                        <td class="visible-with-data" id="ESPECIE">' + (feature.properties['ESPECIE'] !== null ? autolinker.link(String(feature.properties['ESPECIE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ALTURA</th>\
+                        <td class="visible-with-data" id="ALTURA">' + (feature.properties['ALTURA'] !== null ? autolinker.link(String(feature.properties['ALTURA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DIAM_TRONCO</th>\
+                        <td class="visible-with-data" id="DIAM_TRONCO">' + (feature.properties['DIAM_TRONCO'] !== null ? autolinker.link(String(feature.properties['DIAM_TRONCO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DIAM_COPA</th>\
+                        <td class="visible-with-data" id="DIAM_COPA">' + (feature.properties['DIAM_COPA'] !== null ? autolinker.link(String(feature.properties['DIAM_COPA']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ESTADO</th>\
+                        <td class="visible-with-data" id="ESTADO">' + (feature.properties['ESTADO'] !== null ? autolinker.link(String(feature.properties['ESTADO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ACTUACION_PENDIENTE</th>\
+                        <td class="visible-with-data" id="ACTUACION_PENDIENTE">' + (feature.properties['ACTUACION_PENDIENTE'] !== null ? autolinker.link(String(feature.properties['ACTUACION_PENDIENTE']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_ARBOLADO_4_0(feature) {
+            switch(String(feature.properties['ESTADO'])) {
+                case 'ORDEN DE EJECUCIÓN':
+                    return {
+                pane: 'pane_ARBOLADO_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(176,0,21,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'PROGRAMADO':
+                    return {
+                pane: 'pane_ARBOLADO_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(212,170,0,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_ARBOLADO_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(25,173,52,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_ARBOLADO_4');
+        map.getPane('pane_ARBOLADO_4').style.zIndex = 404;
+        map.getPane('pane_ARBOLADO_4').style['mix-blend-mode'] = 'normal';
+        var layer_ARBOLADO_4 = new L.geoJson(json_ARBOLADO_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_ARBOLADO_4',
+            layerName: 'layer_ARBOLADO_4',
+            pane: 'pane_ARBOLADO_4',
+            onEachFeature: pop_ARBOLADO_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_ARBOLADO_4_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_ARBOLADO_4);
+        map.addLayer(layer_ARBOLADO_4);
+        var overlaysTree = [
+        {label: '<b>ARBOLADO</b>',  selectAllCheckbox: true, children: [
+            {label: 'ARBOLADO<br /><table><tr><td style="text-align: center;"><img src="legend/ARBOLADO_4_ORDENDEEJECUCIÓN0.png" /></td><td>ORDEN DE EJECUCIÓN</td></tr><tr><td style="text-align: center;"><img src="legend/ARBOLADO_4_PROGRAMADO1.png" /></td><td>PROGRAMADO</td></tr><tr><td style="text-align: center;"><img src="legend/ARBOLADO_4_SINACTUACIONESPENDIENTES2.png" /></td><td>SIN ACTUACIONES PENDIENTES</td></tr></table>', layer: layer_ARBOLADO_4},]},
+        {label: '<b>ZONAS VERDES</b>',  selectAllCheckbox: true, children: [
+            {label: 'ZONAS_VERDES<br /><table><tr><td style="text-align: center;"><img src="legend/ZONAS_VERDES_3_ORDENDEEJECUCIÓN0.png" /></td><td>ORDEN DE EJECUCIÓN</td></tr><tr><td style="text-align: center;"><img src="legend/ZONAS_VERDES_3_PROGRAMADO1.png" /></td><td>PROGRAMADO</td></tr><tr><td style="text-align: center;"><img src="legend/ZONAS_VERDES_3_SINACTUACIONESPENDIENTES2.png" /></td><td>SIN ACTUACIONES PENDIENTES</td></tr></table>', layer: layer_ZONAS_VERDES_3},]},
+        {label: '<b>MAPAS BASE</b>',  selectAllCheckbox: true, children: [
+            {label: "Viales", layer: layer_Viales_2},
+            {label: "Google.cn Satellite", layer: layer_GooglecnSatellite_1, radioGroup: 'bm' },
+            {label: "Positron", layer: layer_Positron_0, radioGroup: 'bm' },]},]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: true,
+        });
+        lay.addTo(map);
+        map.on("zoomend", function(){
+
+                if (map.hasLayer(layer_ARBOLADO_4)) {
+                    if (map.getZoom() <= 19 && map.getZoom() >= 19) {
+                        layer_ARBOLADO_4.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_ARBOLADO_4.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+        });
+        setBounds();
+                if (map.hasLayer(layer_ARBOLADO_4)) {
+                    if (map.getZoom() <= 19 && map.getZoom() >= 19) {
+                        layer_ARBOLADO_4.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_ARBOLADO_4.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+        map.addControl(new L.Control.Search({
+            layer: layer_ARBOLADO_4,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'ID'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"ESPECIE": "str","ACTUACION PENDIENTE": "str","TIPO_ZV": "str","ACTUACION PENDIENTE ZZVV": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_ESPECIE = document.createElement('div');
+            div_ESPECIE.id = "div_ESPECIE";
+            div_ESPECIE.className= "filterselect";
+            document.getElementById("menu").appendChild(div_ESPECIE);
+            sel_ESPECIE = document.createElement('select');
+            sel_ESPECIE.multiple = true;
+            sel_ESPECIE.size = 10;
+            sel_ESPECIE.id = "sel_ESPECIE";
+            var ESPECIE_options_str = "<option value='' unselected></option>";
+            sel_ESPECIE.onchange = function(){filterFunc()};
+            ESPECIE_options_str  += '<option value="Acer negundo">Acer negundo</option>';
+            ESPECIE_options_str  += '<option value="Acer platanoides">Acer platanoides</option>';
+            ESPECIE_options_str  += '<option value="Cedrus atlantica">Cedrus atlantica</option>';
+            ESPECIE_options_str  += '<option value="Cedrus deodara">Cedrus deodara</option>';
+            ESPECIE_options_str  += '<option value="Celtis australis">Celtis australis</option>';
+            ESPECIE_options_str  += '<option value="Cercis siliquastrum">Cercis siliquastrum</option>';
+            ESPECIE_options_str  += '<option value="Cupressus arizonica">Cupressus arizonica</option>';
+            ESPECIE_options_str  += '<option value="Cupressus sempervirens">Cupressus sempervirens</option>';
+            ESPECIE_options_str  += '<option value="Fraxinus angustifolia">Fraxinus angustifolia</option>';
+            ESPECIE_options_str  += '<option value="Ligustrum lucidum">Ligustrum lucidum</option>';
+            ESPECIE_options_str  += '<option value="Melia azedarach">Melia azedarach</option>';
+            ESPECIE_options_str  += '<option value="Morus alba">Morus alba</option>';
+            ESPECIE_options_str  += '<option value="Morus nigra">Morus nigra</option>';
+            ESPECIE_options_str  += '<option value="Phoenix canariensis">Phoenix canariensis</option>';
+            ESPECIE_options_str  += '<option value="Pinus halepensis">Pinus halepensis</option>';
+            ESPECIE_options_str  += '<option value="Pinus pinea">Pinus pinea</option>';
+            ESPECIE_options_str  += '<option value="Prunus cerasifera var. pissardii">Prunus cerasifera var. pissardii</option>';
+            ESPECIE_options_str  += '<option value="Punica granatum">Punica granatum</option>';
+            ESPECIE_options_str  += '<option value="Salix babilonica">Salix babilonica</option>';
+            ESPECIE_options_str  += '<option value="Sophora japonica">Sophora japonica</option>';
+            ESPECIE_options_str  += '<option value="Thuja spp.">Thuja spp.</option>';
+            ESPECIE_options_str  += '<option value="Ulmus spp.">Ulmus spp.</option>';
+            sel_ESPECIE.innerHTML = ESPECIE_options_str;
+            div_ESPECIE.appendChild(sel_ESPECIE);
+            var lab_ESPECIE = document.createElement('div');
+            lab_ESPECIE.innerHTML = 'ESPECIE';
+            lab_ESPECIE.className = 'filterlabel';
+            div_ESPECIE.appendChild(lab_ESPECIE);
+            var reset_ESPECIE = document.createElement('div');
+            reset_ESPECIE.innerHTML = 'clear filter';
+            reset_ESPECIE.className = 'filterlabel';
+            reset_ESPECIE.onclick = function() {
+                var options = document.getElementById("sel_ESPECIE").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_ESPECIE.appendChild(reset_ESPECIE);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_ACTUACIONPENDIENTE = document.createElement('div');
+            div_ACTUACIONPENDIENTE.id = "div_ACTUACIONPENDIENTE";
+            div_ACTUACIONPENDIENTE.className= "filterselect";
+            document.getElementById("menu").appendChild(div_ACTUACIONPENDIENTE);
+            sel_ACTUACIONPENDIENTE = document.createElement('select');
+            sel_ACTUACIONPENDIENTE.multiple = true;
+            sel_ACTUACIONPENDIENTE.size = 9;
+            sel_ACTUACIONPENDIENTE.id = "sel_ACTUACIONPENDIENTE";
+            var ACTUACIONPENDIENTE_options_str = "<option value='' unselected></option>";
+            sel_ACTUACIONPENDIENTE.onchange = function(){filterFunc()};
+            ACTUACIONPENDIENTE_options_str  += '<option value="ABONADO">ABONADO</option>';
+            ACTUACIONPENDIENTE_options_str  += '<option value="PODA FACHADA">PODA FACHADA</option>';
+            ACTUACIONPENDIENTE_options_str  += '<option value="PODA FORMACIÓN">PODA FORMACIÓN</option>';
+            ACTUACIONPENDIENTE_options_str  += '<option value="RETIRADA RAMAS">RETIRADA RAMAS</option>';
+            ACTUACIONPENDIENTE_options_str  += '<option value="TALA">TALA</option>';
+            ACTUACIONPENDIENTE_options_str  += '<option value="TERCIADO">TERCIADO</option>';
+            ACTUACIONPENDIENTE_options_str  += '<option value="TRATAMIENTO FITOSANITARIO">TRATAMIENTO FITOSANITARIO</option>';
+            sel_ACTUACIONPENDIENTE.innerHTML = ACTUACIONPENDIENTE_options_str;
+            div_ACTUACIONPENDIENTE.appendChild(sel_ACTUACIONPENDIENTE);
+            var lab_ACTUACIONPENDIENTE = document.createElement('div');
+            lab_ACTUACIONPENDIENTE.innerHTML = 'ACTUACION PENDIENTE';
+            lab_ACTUACIONPENDIENTE.className = 'filterlabel';
+            div_ACTUACIONPENDIENTE.appendChild(lab_ACTUACIONPENDIENTE);
+            var reset_ACTUACIONPENDIENTE = document.createElement('div');
+            reset_ACTUACIONPENDIENTE.innerHTML = 'clear filter';
+            reset_ACTUACIONPENDIENTE.className = 'filterlabel';
+            reset_ACTUACIONPENDIENTE.onclick = function() {
+                var options = document.getElementById("sel_ACTUACIONPENDIENTE").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_ACTUACIONPENDIENTE.appendChild(reset_ACTUACIONPENDIENTE);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_TIPO_ZV = document.createElement('div');
+            div_TIPO_ZV.id = "div_TIPO_ZV";
+            div_TIPO_ZV.className= "filterselect";
+            document.getElementById("menu").appendChild(div_TIPO_ZV);
+            sel_TIPO_ZV = document.createElement('select');
+            sel_TIPO_ZV.multiple = true;
+            sel_TIPO_ZV.size = 4;
+            sel_TIPO_ZV.id = "sel_TIPO_ZV";
+            var TIPO_ZV_options_str = "<option value='' unselected></option>";
+            sel_TIPO_ZV.onchange = function(){filterFunc()};
+            TIPO_ZV_options_str  += '<option value="OTRO">OTRO</option>';
+            TIPO_ZV_options_str  += '<option value="PARTERRE CON ARBOLADO">PARTERRE CON ARBOLADO</option>';
+            TIPO_ZV_options_str  += '<option value="PARTERRE CON ARBOLADO Y ARBUSTIVAS">PARTERRE CON ARBOLADO Y ARBUSTIVAS</option>';
+            TIPO_ZV_options_str  += '<option value="PARTERRE CON ARBUSTIVAS">PARTERRE CON ARBUSTIVAS</option>';
+            sel_TIPO_ZV.innerHTML = TIPO_ZV_options_str;
+            div_TIPO_ZV.appendChild(sel_TIPO_ZV);
+            var lab_TIPO_ZV = document.createElement('div');
+            lab_TIPO_ZV.innerHTML = 'TIPO_ZV';
+            lab_TIPO_ZV.className = 'filterlabel';
+            div_TIPO_ZV.appendChild(lab_TIPO_ZV);
+            var reset_TIPO_ZV = document.createElement('div');
+            reset_TIPO_ZV.innerHTML = 'clear filter';
+            reset_TIPO_ZV.className = 'filterlabel';
+            reset_TIPO_ZV.onclick = function() {
+                var options = document.getElementById("sel_TIPO_ZV").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_TIPO_ZV.appendChild(reset_TIPO_ZV);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_ACTUACIONPENDIENTEZZVV = document.createElement('div');
+            div_ACTUACIONPENDIENTEZZVV.id = "div_ACTUACIONPENDIENTEZZVV";
+            div_ACTUACIONPENDIENTEZZVV.className= "filterselect";
+            document.getElementById("menu").appendChild(div_ACTUACIONPENDIENTEZZVV);
+            sel_ACTUACIONPENDIENTEZZVV = document.createElement('select');
+            sel_ACTUACIONPENDIENTEZZVV.multiple = true;
+            sel_ACTUACIONPENDIENTEZZVV.size = 6;
+            sel_ACTUACIONPENDIENTEZZVV.id = "sel_ACTUACIONPENDIENTEZZVV";
+            var ACTUACIONPENDIENTEZZVV_options_str = "<option value='' unselected></option>";
+            sel_ACTUACIONPENDIENTEZZVV.onchange = function(){filterFunc()};
+            ACTUACIONPENDIENTEZZVV_options_str  += '<option value="ABONADO">ABONADO</option>';
+            ACTUACIONPENDIENTEZZVV_options_str  += '<option value="ESCARDA">ESCARDA</option>';
+            ACTUACIONPENDIENTEZZVV_options_str  += '<option value="OTRO">OTRO</option>';
+            ACTUACIONPENDIENTEZZVV_options_str  += '<option value="RECORTE SETO">RECORTE SETO</option>';
+            sel_ACTUACIONPENDIENTEZZVV.innerHTML = ACTUACIONPENDIENTEZZVV_options_str;
+            div_ACTUACIONPENDIENTEZZVV.appendChild(sel_ACTUACIONPENDIENTEZZVV);
+            var lab_ACTUACIONPENDIENTEZZVV = document.createElement('div');
+            lab_ACTUACIONPENDIENTEZZVV.innerHTML = 'ACTUACION PENDIENTE ZZVV';
+            lab_ACTUACIONPENDIENTEZZVV.className = 'filterlabel';
+            div_ACTUACIONPENDIENTEZZVV.appendChild(lab_ACTUACIONPENDIENTEZZVV);
+            var reset_ACTUACIONPENDIENTEZZVV = document.createElement('div');
+            reset_ACTUACIONPENDIENTEZZVV.innerHTML = 'clear filter';
+            reset_ACTUACIONPENDIENTEZZVV.className = 'filterlabel';
+            reset_ACTUACIONPENDIENTEZZVV.onclick = function() {
+                var options = document.getElementById("sel_ACTUACIONPENDIENTEZZVV").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_ACTUACIONPENDIENTEZZVV.appendChild(reset_ACTUACIONPENDIENTEZZVV);
+        resetLabels([layer_ARBOLADO_4]);
+        map.on("zoomend", function(){
+            resetLabels([layer_ARBOLADO_4]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_ARBOLADO_4]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_ARBOLADO_4]);
+        });
+        </script>
+    </body>
+</html>
