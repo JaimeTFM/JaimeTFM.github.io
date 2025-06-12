@@ -22,26 +22,12 @@
             padding: 0;
             margin: 0;
         }
-        /* Style for the tree count display */
-        #treeCount {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            z-index: 1000;
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-family: sans-serif;
-            font-size: 14px;
-            color: #333;
-        }
         </style>
-        <title>Qfield_Fuengirola (QFieldCloud)</title>
+        <title></title>
     </head>
     <body>
         <div id="map">
         </div>
-        <div id="treeCount">Árboles visibles: --</div>
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
         <script src="js/L.Control.Layers.Tree.min.js"></script>
@@ -59,31 +45,31 @@
         <script src="js/tailDT.js"></script>
         <script src="js/nouislider.min.js"></script>
         <script src="js/wNumb.js"></script>
-
+        <!-- Eliminadas las referencias a los archivos GeoJSON estáticos -->
+        <!-- <script src="data/ZONAS_VERDES_3.js"></script> -->
+        <!-- <script src="data/ARBOLADO_4.js"></script> -->
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[36.54008254401248,-4.632666382365984],[36.55157652956763,-4.61334322436886]]);
+        }).fitBounds([[36.945857599614854,-3.8275790711410598],[36.95215374899043,-3.8152246844858886]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
-        
-        // Remove popup's row if "visible-with-data"
+        // remove popup's row if "visible-with-data"
         function removeEmptyRowsFromPopupContent(content, feature) {
-            var tempDiv = document.createElement('div');
-            tempDiv.innerHTML = content;
-            var rows = tempDiv.querySelectorAll('tr');
-            for (var i = 0; i < rows.length; i++) {
-                var td = rows[i].querySelector('td.visible-with-data');
-                var key = td ? td.id : '';
-                if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
-                    rows[i].parentNode.removeChild(rows[i]);
-                }
-            }
-            return tempDiv.innerHTML;
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
         }
-        
-        // Add class to format popup if it contains media
+        // add class to format popup if it contains media
 		function addClassToPopupIfMedia(content, popup) {
 			var tempDiv = document.createElement('div');
 			tempDiv.innerHTML = content;
@@ -97,7 +83,6 @@
 				popup._contentNode.classList.remove('media');
 			}
 		}
-
         var zoomControl = L.control.zoom({
             position: 'topleft'
         }).addTo(map);
@@ -114,29 +99,39 @@
         document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
-            // Adjust map bounds to fit all added layers once they are loaded
-            if (bounds_group.getLayers().length > 0) {
+            if (bounds_group.getBounds().isValid()) {
                 map.fitBounds(bounds_group.getBounds());
             }
         }
-
-        map.createPane('pane_GoogleSatellite_0');
-        map.getPane('pane_GoogleSatellite_0').style.zIndex = 400;
-        var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-            pane: 'pane_GoogleSatellite_0',
-            opacity: 0.6,
-            attribution: '<a href="https://www.google.at/permissions/geoguidelines/attr-guide.html">Map data ©2015 Google</a>',
+        map.createPane('pane_Positron_0');
+        map.getPane('pane_Positron_0').style.zIndex = 400;
+        var layer_Positron_0 = L.tileLayer('http://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            pane: 'pane_Positron_0',
+            opacity: 1.0,
+            attribution: '<a href="https://cartodb.com/basemaps/">Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL.</a>',
             minZoom: 1,
             maxZoom: 28,
             minNativeZoom: 0,
             maxNativeZoom: 20
         });
-        layer_GoogleSatellite_0.addTo(map); // Add base layer directly
-
-        map.createPane('pane_Viales_1');
-        map.getPane('pane_Viales_1').style.zIndex = 401;
-        var layer_Viales_1 = L.WMS.layer("http://www.callejerodeandalucia.es/servicios/cdau/wms", "v_vial", {
-            pane: 'pane_Viales_1',
+        layer_Positron_0;
+        map.createPane('pane_GooglecnSatellite_1');
+        map.getPane('pane_GooglecnSatellite_1').style.zIndex = 401;
+        var layer_GooglecnSatellite_1 = L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
+            pane: 'pane_GooglecnSatellite_1',
+            opacity: 1.0,
+            attribution: '<a href="https://www.google.com/intl/zh-CN_cn/permissions/geoguidelines/attr-guide.html">地图数据 ©2016 Google</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 21
+        });
+        layer_GooglecnSatellite_1;
+        map.addLayer(layer_GooglecnSatellite_1);
+        map.createPane('pane_Viales_2');
+        map.getPane('pane_Viales_2').style.zIndex = 402;
+        var layer_Viales_2 = L.WMS.layer("http://www.callejerodeandalucia.es/servicios/cdau/wms", "v_vial", {
+            pane: 'pane_Viales_2',
             format: 'image/png',
             uppercase: true,
             transparent: true,
@@ -147,12 +142,9 @@
             identify: false,
             attribution: '',
         });
-        layer_Viales_1.addTo(map); // Add base layer directly
+        map.addLayer(layer_Viales_2);
 
-        // WFS URL base
-        var wfsUrl = "https://geoserver-on-render-production.up.railway.app/geoserver/ows?";
-
-        // --- Original Popup and Style Functions (retained for fetched GeoJSON) ---
+        // Funciones para los popups
         function pop_ZONAS_VERDES_3(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
@@ -185,58 +177,75 @@
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
-            layer.on('popupopen', function(e) {
-                addClassToPopupIfMedia(content, e.popup);
-            });
-            layer.bindPopup(content, { maxHeight: 400 });
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
         }
 
+        // Estilos para ZONAS_VERDES
         function style_ZONAS_VERDES_3_0(feature) {
             switch(String(feature.properties['ESTADO'])) {
                 case 'ORDEN DE EJECUCIÓN':
                     return {
-                        pane: 'pane_ZONAS_VERDES_3',
-                        opacity: 1,
-                        color: 'rgba(255,255,255,1.0)',
-                        dashArray: '',
-                        lineCap: 'butt',
-                        lineJoin: 'miter',
-                        weight: 1.0, 
-                        fill: true,
-                        fillOpacity: 1,
-                        fillColor: 'rgba(193,20,40,0.6549019607843137)',
-                        interactive: true,
-                    }
+                pane: 'pane_ZONAS_VERDES_3',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(193,20,40,0.6549019607843137)',
+                interactive: true,
+            }
+                    break;
                 case 'PROGRAMADO':
                     return {
-                        pane: 'pane_ZONAS_VERDES_3',
-                        opacity: 1,
-                        color: 'rgba(255,255,255,1.0)',
-                        dashArray: '',
-                        lineCap: 'butt',
-                        lineJoin: 'miter',
-                        weight: 1.0, 
-                        fill: true,
-                        fillOpacity: 1,
-                        fillColor: 'rgba(193,118,20,0.6196078431372549)',
-                        interactive: true,
-                    }
+                pane: 'pane_ZONAS_VERDES_3',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(193,118,20,0.6196078431372549)',
+                interactive: true,
+            }
+                    break;
                 default:
                     return {
-                        pane: 'pane_ZONAS_VERDES_3',
-                        opacity: 1,
-                        color: 'rgba(255,255,255,1.0)',
-                        dashArray: '',
-                        lineCap: 'butt',
-                        lineJoin: 'miter',
-                        weight: 1.0, 
-                        fill: true,
-                        fillOpacity: 1,
-                        fillColor: 'rgba(20,193,38,0.6196078431372549)',
-                        interactive: true,
-                    }
+                pane: 'pane_ZONAS_VERDES_3',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(20,193,38,0.6196078431372549)',
+                interactive: true,
+            }
+                    break;
             }
         }
+        map.createPane('pane_ZONAS_VERDES_3');
+        map.getPane('pane_ZONAS_VERDES_3').style.zIndex = 403;
+        map.getPane('pane_ZONAS_VERDES_3').style['mix-blend-mode'] = 'normal';
+        // Inicializar layer_ZONAS_VERDES_3 como un L.geoJson vacío
+        var layer_ZONAS_VERDES_3 = new L.geoJson(null, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_ZONAS_VERDES_3',
+            layerName: 'layer_ZONAS_VERDES_3',
+            pane: 'pane_ZONAS_VERDES_3',
+            onEachFeature: pop_ZONAS_VERDES_3,
+            style: style_ZONAS_VERDES_3_0,
+        });
 
         function pop_ARBOLADO_4(feature, layer) {
             var popupContent = '<table>\
@@ -270,173 +279,168 @@
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
-            layer.on('popupopen', function(e) {
-                addClassToPopupIfMedia(content, e.popup);
-            });
-            layer.bindPopup(content, { maxHeight: 400 });
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
         }
 
+        // Estilos para ARBOLADO
         function style_ARBOLADO_4_0(feature) {
             switch(String(feature.properties['ESTADO'])) {
                 case 'ORDEN DE EJECUCIÓN':
                     return {
-                        pane: 'pane_ARBOLADO_4',
-                        radius: 4.0,
-                        opacity: 1,
-                        color: 'rgba(255,255,255,1.0)',
-                        dashArray: '',
-                        lineCap: 'butt',
-                        lineJoin: 'miter',
-                        weight: 1,
-                        fill: true,
-                        fillOpacity: 1,
-                        fillColor: 'rgba(176,0,21,1.0)',
-                        interactive: true,
-                    }
+                pane: 'pane_ARBOLADO_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(176,0,21,1.0)',
+                interactive: true,
+            }
+                    break;
                 case 'PROGRAMADO':
                     return {
-                        pane: 'pane_ARBOLADO_4',
-                        radius: 4.0,
-                        opacity: 1,
-                        color: 'rgba(255,255,255,1.0)',
-                        dashArray: '',
-                        lineCap: 'butt',
-                        lineJoin: 'miter',
-                        weight: 1,
-                        fill: true,
-                        fillOpacity: 1,
-                        fillColor: 'rgba(212,170,0,1.0)',
-                        interactive: true,
-                    }
+                pane: 'pane_ARBOLADO_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(212,170,0,1.0)',
+                interactive: true,
+            }
+                    break;
                 default:
                     return {
-                        pane: 'pane_ARBOLADO_4',
-                        radius: 4.0,
-                        opacity: 1,
-                        color: 'rgba(255,255,255,1.0)',
-                        dashArray: '',
-                        lineCap: 'butt',
-                        lineJoin: 'miter',
-                        weight: 1,
-                        fill: true,
-                        fillOpacity: 1,
-                        fillColor: 'rgba(25,173,52,1.0)',
-                        interactive: true,
-                    }
+                pane: 'pane_ARBOLADO_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(25,173,52,1.0)',
+                interactive: true,
+            }
+                    break;
             }
         }
-        
-        // --- Helper function to fetch GeoJSON and create layer ---
-        async function fetchGeoJsonLayer(wfsUrl, layerName, srsName, popupFunction, styleFunction, paneName) {
-            const requestUrl = `${wfsUrl}request=GetFeature&typename=${layerName}&outputFormat=application/json&srsname=${srsName}&version=1.1.0`; // Ensure version is included
-            
+        map.createPane('pane_ARBOLADO_4');
+        map.getPane('pane_ARBOLADO_4').style.zIndex = 404;
+        map.getPane('pane_ARBOLADO_4').style['mix-blend-mode'] = 'normal';
+        // Inicializar layer_ARBOLADO_4 como un L.geoJson vacío
+        var layer_ARBOLADO_4 = new L.geoJson(null, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_ARBOLADO_4',
+            layerName: 'layer_ARBOLADO_4',
+            pane: 'pane_ARBOLADO_4',
+            onEachFeature: pop_ARBOLADO_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_ARBOLADO_4_0(feature));
+            },
+        });
+
+        // Configuración WFS
+        const wfsBaseUrl = 'https://geoserver-on-render-production.up.railway.app/geoserver/ows';
+        const wfsLayers = {
+            'ZONAS_VERDES': 'sig:ZONAS_VERDES',
+            'ARBOLADO': 'sig:ARBOLADO'
+        };
+
+        // Variables globales para mantener los datos originales de las capas para el filtrado
+        // La función filterFunc espera que estos objetos existan y contengan un array 'features'.
+        window.json_ZONAS_VERDES_3 = { "type": "FeatureCollection", "features": [] };
+        window.json_ARBOLADO_4 = { "type": "FeatureCollection", "features": [] };
+
+        /**
+         * Fetches GeoJSON data from a WFS service.
+         * @param {string} typeName - The fully qualified name of the WFS layer (e.g., 'namespace:layername').
+         * @returns {Promise<Array<Object>>} A promise that resolves to an array of GeoJSON features.
+         */
+        async function fetchWfsData(typeName) {
+            const url = `${wfsBaseUrl}?service=WFS&version=1.1.0&request=GetFeature&typeName=${typeName}&outputFormat=application/json`;
             try {
-                console.log(`Fetching GeoJSON for ${layerName} from: ${requestUrl}`);
-                const response = await fetch(requestUrl);
+                const response = await fetch(url);
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status} for ${layerName}`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                const geojsonData = await response.json();
-                console.log(`Fetched ${geojsonData.features.length} features for ${layerName}`);
-
-                // Create L.geoJson layer
-                const geoJsonLayer = new L.geoJson(geojsonData, {
-                    onEachFeature: popupFunction,
-                    style: styleFunction,
-                    pane: paneName,
-                    // Store layer name and dataVar for filterFunc
-                    dataVar: `json_${layerName.replace(':', '_').replace('-', '_')}`, 
-                    layerName: `layer_${layerName.replace(':', '_').replace('-', '_')}`,
-                    pointToLayer: function (feature, latlng) { // Needed for point layers like ARBOLADO
-                        if (layerName === "Supabase:ARBOLADO") {
-                            return L.circleMarker(latlng, style_ARBOLADO_4_0(feature));
-                        }
-                        return L.marker(latlng); // Default for other point layers
-                    },
-                });
-
-                // Make the fetched data accessible globally for filterFunc
-                window[`json_${layerName.replace(':', '_').replace('-', '_')}`] = geojsonData;
-
-                return geoJsonLayer;
-
+                const data = await response.json();
+                console.log(`Datos obtenidos para ${typeName}. Número de features: ${data.features ? data.features.length : 0}`);
+                return data.features || [];
             } catch (error) {
-                console.error(`Error fetching GeoJSON for ${layerName}:`, error);
-                return null; // Return null if fetching fails
+                console.error(`Error al obtener datos WFS para ${typeName}:`, error);
+                return [];
             }
         }
 
-        // --- Asynchronous Map Initialization and Layer Loading ---
-        (async function initializeMapAndLayers() {
-            // ARBOLADO Layer from WFS (as GeoJSON)
-            map.createPane('pane_ARBOLADO_4');
-            map.getPane('pane_ARBOLADO_4').style.zIndex = 404;
-            map.getPane('pane_ARBOLADO_4').style['mix-blend-mode'] = 'normal';
-            var layer_ARBOLADO_4 = await fetchGeoJsonLayer(wfsUrl, "Supabase:ARBOLADO", 'EPSG:25830', pop_ARBOLADO_4, style_ARBOLADO_4_0, 'pane_ARBOLADO_4');
-            if (layer_ARBOLADO_4) {
-                layer_ARBOLADO_4.addTo(map);
-                bounds_group.addLayer(layer_ARBOLADO_4);
-            }
+        /**
+         * Loads and displays WFS layers on the map.
+         * Fetches data, adds it to the respective GeoJSON layers,
+         * and then fits the map bounds to the loaded features.
+         */
+        async function loadAndDisplayWfsLayers() {
+            // Cargar y almacenar las features originales de ZONAS_VERDES
+            const fetchedZonasVerdesFeatures = await fetchWfsData(wfsLayers['ZONAS_VERDES']);
+            window.json_ZONAS_VERDES_3.features = fetchedZonasVerdesFeatures; // Actualizar el objeto global para el filtro
+            layer_ZONAS_VERDES_3.addData(window.json_ZONAS_VERDES_3); // Añadir datos a la capa Leaflet
+            map.addLayer(layer_ZONAS_VERDES_3); // Añadir capa al mapa
+            bounds_group.addLayer(layer_ZONAS_VERDES_3); // Añadir capa al grupo para el ajuste de límites
 
-            // ZONAS VERDES Layer from WFS (as GeoJSON)
-            map.createPane('pane_ZONAS_VERDES_3');
-            map.getPane('pane_ZONAS_VERDES_3').style.zIndex = 403;
-            map.getPane('pane_ZONAS_VERDES_3').style['mix-blend-mode'] = 'normal';
-            var layer_ZONAS_VERDES_3 = await fetchGeoJsonLayer(wfsUrl, "Supabase:ZONAS_VERDES", 'EPSG:25830', pop_ZONAS_VERDES_3, style_ZONAS_VERDES_3_0, 'pane_ZONAS_VERDES_3');
-            if (layer_ZONAS_VERDES_3) {
-                layer_ZONAS_VERDES_3.addTo(map);
-                bounds_group.addLayer(layer_ZONAS_VERDES_3);
-            }
-            
-            // ACTUACIONES Layer from WFS (as WMS)
-            map.createPane('pane_ACTUACIONES_2');
-            map.getPane('pane_ACTUACIONES_2').style.zIndex = 402;
-            map.getPane('pane_ACTUACIONES_2').style['mix-blend-mode'] = 'normal';
-            var layer_ACTUACIONES_2 = L.WMS.layer(wfsUrl, "Supabase:ACTUACIONES", { 
-                pane: 'pane_ACTUACIONES_2',
-                format: 'image/png',
-                transparent: true,
-                version: '1.1.0', 
-                srs: 'EPSG:25830', 
-                attribution: 'Actuaciones WFS'
-            });
-            layer_ACTUACIONES_2.addTo(map); // Add WMS layer directly
-            bounds_group.addLayer(layer_ACTUACIONES_2);
+            // Cargar y almacenar las features originales de ARBOLADO
+            const fetchedArboladoFeatures = await fetchWfsData(wfsLayers['ARBOLADO']);
+            window.json_ARBOLADO_4.features = fetchedArboladoFeatures; // Actualizar el objeto global para el filtro
+            layer_ARBOLADO_4.addData(window.json_ARBOLADO_4); // Añadir datos a la capa Leaflet
+            map.addLayer(layer_ARBOLADO_4); // Añadir capa al mapa
+            bounds_group.addLayer(layer_ARBOLADO_4);
 
-
-            // Update the tree count and set bounds after all layers are attempted to be loaded
-            updateTreeCount();
+            // Ajustar el mapa a los límites de todas las features cargadas
             setBounds();
+        }
 
-            // Overlays tree setup (now defined after layers are available)
-            var overlaysTree = [
-                {label: '<b>Capas de Datos</b>', selectAllCheckbox: true, children: [
-                    {label: 'Arbolado<br />', layer: layer_ARBOLADO_4},
-                    {label: 'Zonas Verdes<br />', layer: layer_ZONAS_VERDES_3},
-                    {label: 'ACTUACIONES<br />', layer: layer_ACTUACIONES_2},
-                ]},
-                {label: '<b>Mapas base</b>', selectAllCheckbox: true, children: [
-                    {label: "Viales", layer: layer_Viales_1},
-                    {label: "Google Satellite", layer: layer_GoogleSatellite_0, radioGroup: 'bm' },
-                ]}
-            ];
+        // Llamar a la función para iniciar la carga de las capas WFS
+        loadAndDisplayWfsLayers();
 
-            var lay = L.control.layers.tree(null, overlaysTree,{
-                collapsed: true,
-            });
-            lay.addTo(map);
 
-            // Search control (ensure it targets the dynamically loaded layer)
-            map.addControl(new L.Control.Search({
-                layer: layer_ARBOLADO_4,
-                initial: false,
-                hideMarkerOnCollapse: true,
-                propertyName: 'ID' // Assuming 'ID' is the property to search on
-            }));
-            document.getElementsByClassName('search-button')[0].className += ' fa fa-binoculars';
+        var overlaysTree = [
+        {label: '<b>ARBOLADO</b>',  selectAllCheckbox: true, children: [
+            {label: 'ARBOLADO<br /><table><tr><td style="text-align: center;"><img src="legend/ARBOLADO_4_ORDENDEEJECUCIÓN0.png" /></td><td>ORDEN DE EJECUCIÓN</td></tr><tr><td style="text-align: center;"><img src="legend/ARBOLADO_4_PROGRAMADO1.png" /></td><td>PROGRAMADO</td></tr><tr><td style="text-align: center;"><img src="legend/ARBOLADO_4_SINACTUACIONESPENDIENTES2.png" /></td><td>SIN ACTUACIONES PENDIENTES</td></tr></table>', layer: layer_ARBOLADO_4},]},
+        {label: '<b>ZONAS VERDES</b>',  selectAllCheckbox: true, children: [
+            {label: 'ZONAS_VERDES<br /><table><tr><td style="text-align: center;"><img src="legend/ZONAS_VERDES_3_ORDENDEEJECUCIÓN0.png" /></td><td>ORDEN DE EJECUCIÓN</td></tr><tr><td style="text-align: center;"><img src="legend/ZONAS_VERDES_3_PROGRAMADO1.png" /></td><td>PROGRAMADO</td></tr><tr><td style="text-align: center;"><img src="legend/ZONAS_VERDES_3_SINACTUACIONESPENDIENTES2.png" /></td><td>SIN ACTUACIONES PENDIENTES</td></tr></table>', layer: layer_ZONAS_VERDES_3},]},
+        {label: '<b>MAPAS BASE</b>',  selectAllCheckbox: true, children: [
+            {label: "Viales", layer: layer_Viales_2},
+            {label: "Google.cn Satellite", layer: layer_GooglecnSatellite_1, radioGroup: 'bm' },
+            {label: "Positron", layer: layer_Positron_0, radioGroup: 'bm' },]},]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: true,
+        });
+        lay.addTo(map);
+        map.on("zoomend", function(){
 
-            map.on("zoomend", function(){
-                if (layer_ARBOLADO_4 && map.hasLayer(layer_ARBOLADO_4)) { // Check if layer is loaded and on map
+                if (map.hasLayer(layer_ARBOLADO_4)) {
                     if (map.getZoom() <= 19 && map.getZoom() >= 19) {
                         layer_ARBOLADO_4.eachLayer(function (layer) {
                             layer.openTooltip();
@@ -447,310 +451,195 @@
                         });
                     }
                 }
-            });
-            // Initial check for tooltips
-            if (layer_ARBOLADO_4 && map.hasLayer(layer_ARBOLADO_4)) {
-                if (map.getZoom() <= 19 && map.getZoom() >= 19) {
-                    layer_ARBOLADO_4.eachLayer(function (layer) {
-                        layer.openTooltip();
-                    });
-                } else {
-                    layer_ARBOLADO_4.eachLayer(function (layer) {
-                        layer.closeTooltip();
-                    });
-                }
-            }
-
-            // Restore the original filter elements and logic
-            setupFilterUI();
-            filterFunc(); // Apply initial filter
-        })(); // End of async IIFE
-
-
-        // Function to update the visible tree count (now based on GeoJSON data in current view)
-        function updateTreeCount() {
-            if (window.json_Supabase_ARBOLADO && layer_ARBOLADO_4) {
-                // This counts features in the *current visible map extent* after filters
-                // This is still a simplification, actual count might require server-side filtering.
-                // For client-side GeoJSON, a more accurate count after filtering would involve iterating over the filtered features.
-                document.getElementById('treeCount').innerText = `Árboles visibles: ${layer_ARBOLADO_4.getLayers().length}`;
-            } else {
-                document.getElementById('treeCount').innerText = 'Árboles visibles: Cargando...';
-            }
-        }
-
-        var Filters = {"Ubicación": "str","Tipo Arb": "str","CATRISK": "str","Especie": "str", "ESPECIE": "str", "ACTUACION PENDIENTE": "str", "TIPO_ZV": "str", "ACTUACION PENDIENTE ZZVV": "str"};
-
-        function filterFunc() {
-            map.eachLayer(function(lyr){
-                // Only apply client-side filters to L.geoJson layers (ARBOLADO and ZONAS_VERDES)
-                if (lyr instanceof L.GeoJSON && "options" in lyr && "dataVar" in lyr["options"]){
-                    let originalFeatures = window[lyr.options.dataVar].features.slice(0); // Get original data
-                    let filteredFeatures = originalFeatures.slice(0); // Start with all features for this layer
-
-                    for (let key in Filters){
-                        let keyS = key.replace(/[^a-zA-Z0-9_]/g, ""); // Sanitize key for ID lookup
-                        let filterType = Filters[key];
-                        
-                        let selectElement = document.getElementById("sel_" + keyS);
-                        
-                        if (selectElement && (filterType === "str" || filterType === "bool")) {
-                            let selection = [];
-                            for (let i = 0; i < selectElement.options.length; i++) {
-                                if (selectElement.options[i].selected) {
-                                    selection.push(selectElement.options[i].value);
-                                }
-                            }
-                            
-                            if (selection.length > 0) {
-                                filteredFeatures = filteredFeatures.filter(feature => {
-                                    // Check if property exists and its value is in the selection
-                                    return feature.properties.hasOwnProperty(key) && selection.includes(String(feature.properties[key]));
-                                });
-                            }
-                        }
-                        // Add more filter types (int, real, date) if needed, following similar logic
+        });
+        // Comentada la llamada original a setBounds para que se ejecute después de cargar los datos WFS
+        // setBounds();
+                if (map.hasLayer(layer_ARBOLADO_4)) {
+                    if (map.getZoom() <= 19 && map.getZoom() >= 19) {
+                        layer_ARBOLADO_4.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_ARBOLADO_4.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
                     }
-                    lyr.clearLayers();
-                    lyr.addData(filteredFeatures);
                 }
-            });
-            updateTreeCount();
+        map.addControl(new L.Control.Search({
+            layer: layer_ARBOLADO_4,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'ID'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"ESPECIE": "str","ACTUACION PENDIENTE": "str","TIPO_ZV": "str","ACTUACION PENDIENTE ZZVV": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            // Asegurarse de que `this[lyr["options"]["dataVar"]]` esté disponible y tenga `features`
+            if (this[lyr["options"]["dataVar"]] && this[lyr["options"]["dataVar"]].features) {
+                features = this[lyr["options"]["dataVar"]].features.slice(0); // Trabajar con una copia de los datos originales
+                try{
+                  for (key in Filters){
+                    keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                    if (Filters[key] == "str" || Filters[key] == "bool"){
+                      var selection = [];
+                      var options = document.getElementById("sel_" + keyS).options
+                      for (var i=0; i < options.length; i++) {
+                        if (options[i].selected) selection.push(options[i].value);
+                      }
+                        try{
+                          if (key in features[0].properties){
+                            for (i = features.length - 1;
+                              i >= 0; --i){
+                              if (selection.indexOf(
+                              features[i].properties[key])<0
+                              && selection.length>0) {
+                              features.splice(i,1);
+                              }
+                            }
+                          }
+                        } catch(err){
+                            console.error("Error en filtro de cadena para " + key + ":", err);
+                      }
+                    }
+                    if (Filters[key] == "int"){
+                      sliderVals =  document.getElementById(
+                        "div_" + keyS).noUiSlider.get();
+                      try{
+                        if (key in features[0].properties){
+                        for (i = features.length - 1; i >= 0; --i){
+                          if (parseInt(features[i].properties[key])
+                              < sliderVals[0]
+                              || parseInt(features[i].properties[key])
+                              > sliderVals[1]){
+                                features.splice(i,1);
+                              }
+                            }
+                          }
+                        } catch(err){
+                            console.error("Error en filtro de entero para " + key + ":", err);
+                        }
+                      }
+                    if (Filters[key] == "real"){
+                      sliderVals =  document.getElementById(
+                        "div_" + keyS).noUiSlider.get();
+                      try{
+                        if (key in features[0].properties){
+                        for (i = features.length - 1; i >= 0; --i){
+                          if (features[i].properties[key]
+                              < sliderVals[0]
+                              || features[i].properties[key]
+                              > sliderVals[1]){
+                                features.splice(i,1);
+                              }
+                            }
+                          }
+                        } catch(err){
+                            console.error("Error en filtro real para " + key + ":", err);
+                        }
+                      }
+                    if (Filters[key] == "date"
+                      || Filters[key] == "datetime"
+                      || Filters[key] == "time"){
+                      try{
+                        if (key in features[0].properties){
+                          HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                          startdate = document.getElementById("dat_" +
+                            HTMLkey + "_date1").value.replace(" ", "T");
+                          enddate = document.getElementById("dat_" +
+                            HTMLkey + "_date2").value.replace(" ", "T");
+                          for (i = features.length - 1; i >= 0; --i){
+                            if (features[i].properties[key] < startdate
+                              || features[i].properties[key] > enddate){
+                              features.splice(i,1);
+                            }
+                          }
+                        }
+                      } catch(err){
+                        console.error("Error en filtro de fecha para " + key + ":", err);
+                      }
+                    }
+                  }
+                } catch(err){
+                    console.error("Error general en filterFunc:", err);
+                }
+              this[lyr["options"]["layerName"]].clearLayers();
+              this[lyr["options"]["layerName"]].addData(features);
+            }
+          }
+          })
         }
-
-        function setupFilterUI() {
-            document.getElementById("menu").appendChild(document.createElement("div"));
-            var div_Ubicacin = document.createElement('div');
-            div_Ubicacin.id = "div_Ubicacin";
-            div_Ubicacin.className= "filterselect";
-            document.getElementById("menu").appendChild(div_Ubicacin);
-            sel_Ubicacin = document.createElement('select');
-            sel_Ubicacin.multiple = true;
-            sel_Ubicacin.size = 10;
-            sel_Ubicacin.id = "sel_Ubicacin";
-            var Ubicacin_options_str = "<option value='' unselected></option>";
-            sel_Ubicacin.onchange = function(){filterFunc()};
-            Ubicacin_options_str  += '<option value="Espacio Natural La Cantera">Espacio Natural La Cantera</option>';
-            Ubicacin_options_str  += '<option value="Parque Canino Feria de Abril">Parque Canino Feria de Abril</option>';
-            Ubicacin_options_str  += '<option value="Parque Canino Frascuelo">Parque Canino Frascuelo</option>';
-            Ubicacin_options_str  += '<option value="Parque Canino Lanzarote">Parque Canino Lanzarote</option>';
-            Ubicacin_options_str  += '<option value="Parque Castillo Sohail">Parque Castillo Sohail</option>';
-            Ubicacin_options_str  += '<option value="Parque Fluvial">Parque Fluvial</option>';
-            Ubicacin_options_str  += '<option value="Parque Guau-Guau 1">Parque Guau-Guau 1</option>';
-            Ubicacin_options_str  += '<option value="Parque Guau-Guau 2">Parque Guau-Guau 2</option>';
-            Ubicacin_options_str  += '<option value="Parque Juan Pablo II">Parque Juan Pablo II</option>';
-            Ubicacin_options_str  += '<option value="Parque La Cantera">Parque La Cantera</option>';
-            Ubicacin_options_str  += '<option value="Parque La Loma">Parque La Loma</option>';
-            Ubicacin_options_str  += '<option value="Parque Las Aromáticas">Parque Las Aromáticas</option>';
-            Ubicacin_options_str  += '<option value="Parque Las Presas">Parque Las Presas</option>';
-            Ubicacin_options_str  += '<option value="Parque Los Naranjos">Parque Los Naranjos</option>';
-            Ubicacin_options_str  += '<option value="Parque Mari Carmen Díez">Parque Mari Carmen Díez</option>';
-            Ubicacin_options_str  += '<option value="Parque Natural">Parque Natural</option>';
-            Ubicacin_options_str  += '<option value="Parque PLaza de Los Niños">Parque PLaza de Los Niños</option>';
-            Ubicacin_options_str  += '<option value="Parque Plaza de España">Parque Plaza de España</option>';
-            Ubicacin_options_str  += '<option value="Parque Pulgarcito">Parque Pulgarcito</option>';
-            Ubicacin_options_str  += '<option value="Parque San Alvaro">Parque San Alvaro</option>';
-            Ubicacin_options_str  += '<option value="Parque del Sol">Parque del Sol</option>';
-            sel_Ubicacin.innerHTML = Ubicacin_options_str;
-            div_Ubicacin.appendChild(sel_Ubicacin);
-            var lab_Ubicacin = document.createElement('div');
-            lab_Ubicacin.innerHTML = 'Ubicación';
-            lab_Ubicacin.className = 'filterlabel';
-            div_Ubicacin.appendChild(lab_Ubicacin);
-            var reset_Ubicacin = document.createElement('div');
-            reset_Ubicacin.innerHTML = 'clear filter';
-            reset_Ubicacin.className = 'filterlabel';
-            reset_Ubicacin.onclick = function() {
-                var options = document.getElementById("sel_Ubicacin").options;
-                for (var i=0; i < options.length; i++) {
-                    options[i].selected = false;
-                }
-                filterFunc();
-            };
-            div_Ubicacin.appendChild(reset_Ubicacin);
             document.getElementById("menu").appendChild(
                 document.createElement("div"));
-            var div_TipoArb = document.createElement('div');
-            div_TipoArb.id = "div_TipoArb";
-            div_TipoArb.className= "filterselect";
-            document.getElementById("menu").appendChild(div_TipoArb);
-            sel_TipoArb = document.createElement('select');
-            sel_TipoArb.multiple = true;
-            sel_TipoArb.size = 4;
-            sel_TipoArb.id = "sel_TipoArb";
-            var TipoArb_options_str = "<option value='' unselected></option>";
-            sel_TipoArb.onchange = function(){filterFunc()};
-            TipoArb_options_str  += '<option value="-">-</option>';
-            TipoArb_options_str  += '<option value="Conífera">Conífera</option>';
-            TipoArb_options_str  += '<option value="Frondosa">Frondosa</option>';
-            TipoArb_options_str  += '<option value="Palmácea">Palmácea</option>';
-            sel_TipoArb.innerHTML = TipoArb_options_str;
-            div_TipoArb.appendChild(sel_TipoArb);
-            var lab_TipoArb = document.createElement('div');
-            lab_TipoArb.innerHTML = 'Tipo Arb';
-            lab_TipoArb.className = 'filterlabel';
-            div_TipoArb.appendChild(lab_TipoArb);
-            var reset_TipoArb = document.createElement('div');
-            reset_TipoArb.innerHTML = 'clear filter';
-            reset_TipoArb.className = 'filterlabel';
-            reset_TipoArb.onclick = function() {
-                var options = document.getElementById("sel_TipoArb").options;
+            var div_ESPECIE = document.createElement('div');
+            div_ESPECIE.id = "div_ESPECIE";
+            div_ESPECIE.className= "filterselect";
+            document.getElementById("menu").appendChild(div_ESPECIE);
+            sel_ESPECIE = document.createElement('select');
+            sel_ESPECIE.multiple = true;
+            sel_ESPECIE.size = 10;
+            sel_ESPECIE.id = "sel_ESPECIE";
+            var ESPECIE_options_str = "<option value='' unselected></option>";
+            sel_ESPECIE.onchange = function(){filterFunc()};
+            ESPECIE_options_str  += '<option value="Acer negundo">Acer negundo</option>';
+            ESPECIE_options_str  += '<option value="Acer platanoides">Acer platanoides</option>';
+            ESPECIE_options_str  += '<option value="Cedrus atlantica">Cedrus atlantica</option>';
+            ESPECIE_options_str  += '<option value="Cedrus deodara">Cedrus deodara</option>';
+            ESPECIE_options_str  += '<option value="Celtis australis">Celtis australis</option>';
+            ESPECIE_options_str  += '<option value="Cercis siliquastrum">Cercis siliquastrum</option>';
+            ESPECIE_options_str  += '<option value="Cupressus arizonica">Cupressus arizonica</option>';
+            ESPECIE_options_str  += '<option value="Cupressus sempervirens">Cupressus sempervirens</option>';
+            ESPECIE_options_str  += '<option value="Fraxinus angustifolia">Fraxinus angustifolia</option>';
+            ESPECIE_options_str  += '<option value="Ligustrum lucidum">Ligustrum lucidum</option>';
+            ESPECIE_options_str  += '<option value="Melia azedarach">Melia azedarach</option>';
+            ESPECIE_options_str  += '<option value="Morus alba">Morus alba</option>';
+            ESPECIE_options_str  += '<option value="Morus nigra">Morus nigra</option>';
+            ESPECIE_options_str  += '<option value="Phoenix canariensis">Phoenix canariensis</option>';
+            ESPECIE_options_str  += '<option value="Pinus halepensis">Pinus halepensis</option>';
+            ESPECIE_options_str  += '<option value="Pinus pinea">Pinus pinea</option>';
+            ESPECIE_options_str  += '<option value="Prunus cerasifera var. pissardii">Prunus cerasifera var. pissardii</option>';
+            ESPECIE_options_str  += '<option value="Punica granatum">Punica granatum</option>';
+            ESPECIE_options_str  += '<option value="Salix babilonica">Salix babilonica</option>';
+            ESPECIE_options_str  += '<option value="Sophora japonica">Sophora japonica</option>';
+            ESPECIE_options_str  += '<option value="Thuja spp.">Thuja spp.</option>';
+            ESPECIE_options_str  += '<option value="Ulmus spp.">Ulmus spp.</option>';
+            sel_ESPECIE.innerHTML = ESPECIE_options_str;
+            div_ESPECIE.appendChild(sel_ESPECIE);
+            var lab_ESPECIE = document.createElement('div');
+            lab_ESPECIE.innerHTML = 'ESPECIE';
+            lab_ESPECIE.className = 'filterlabel';
+            div_ESPECIE.appendChild(lab_ESPECIE);
+            var reset_ESPECIE = document.createElement('div');
+            reset_ESPECIE.innerHTML = 'clear filter';
+            reset_ESPECIE.className = 'filterlabel';
+            reset_ESPECIE.onclick = function() {
+                var options = document.getElementById("sel_ESPECIE").options;
                 for (var i=0; i < options.length; i++) {
                     options[i].selected = false;
                 }
                 filterFunc();
             };
-            div_TipoArb.appendChild(reset_TipoArb);
-            document.getElementById("menu").appendChild(
-                document.createElement("div"));
-            var div_CATRISK = document.createElement('div');
-            div_CATRISK.id = "div_CATRISK";
-            div_CATRISK.className= "filterselect";
-            document.getElementById("menu").appendChild(div_CATRISK);
-            sel_CATRISK = document.createElement('select');
-            sel_CATRISK.multiple = true;
-            sel_CATRISK.size = 5;
-            sel_CATRISK.id = "sel_CATRISK";
-            var CATRISK_options_str = "<option value='' unselected></option>";
-            sel_CATRISK.onchange = function(){filterFunc()};
-            CATRISK_options_str  += '<option value="ALTO">ALTO</option>';
-            CATRISK_options_str  += '<option value="BAJO">BAJO</option>';
-            CATRISK_options_str  += '<option value="MEDIO">MEDIO</option>';
-            CATRISK_options_str  += '<option value="MEDIO-ALTO">MEDIO-ALTO</option>';
-            CATRISK_options_str  += '<option value="NULO">NULO</option>';
-            sel_CATRISK.innerHTML = CATRISK_options_str;
-            div_CATRISK.appendChild(sel_CATRISK);
-            var lab_CATRISK = document.createElement('div');
-            lab_CATRISK.innerHTML = 'CATRISK';
-            lab_CATRISK.className = 'filterlabel';
-            div_CATRISK.appendChild(lab_CATRISK);
-            var reset_CATRISK = document.createElement('div');
-            reset_CATRISK.innerHTML = 'clear filter';
-            reset_CATRISK.className = 'filterlabel';
-            reset_CATRISK.onclick = function() {
-                var options = document.getElementById("sel_CATRISK").options;
-                for (var i=0; i < options.length; i++) {
-                    options[i].selected = false;
-                }
-                filterFunc();
-            };
-            div_CATRISK.appendChild(reset_CATRISK);
-            document.getElementById("menu").appendChild(
-                document.createElement("div"));
-            var div_Especie = document.createElement('div');
-            div_Especie.id = "div_Especie";
-            div_Especie.className= "filterselect";
-            document.getElementById("menu").appendChild(div_Especie);
-            sel_Especie = document.createElement('select');
-            sel_Especie.multiple = true;
-            sel_Especie.size = 10;
-            sel_Especie.id = "sel_Especie";
-            var Especie_options_str = "<option value='' unselected></option>";
-            sel_Especie.onchange = function(){filterFunc()};
-            Especie_options_str  += '<option value="Acacia dealbata">Acacia dealbata</option>';
-            Especie_options_str  += '<option value="Acacia melanoxylon">Acacia melanoxylon</option>';
-            Especie_options_str  += '<option value="Acer campestre">Acer campestre</option>';
-            Especie_options_str  += '<option value="Acer negundo">Acer negundo</option>';
-            Especie_options_str  += '<option value="Albizia julibrissin">Albizia julibrissin</option>';
-            Especie_options_str  += '<option value="Araucaria heterophylla">Araucaria heterophylla</option>';
-            Especie_options_str  += '<option value="Arbutus unedo">Arbutus unedo</option>';
-            Especie_options_str  += '<option value="Arecastrum Romanzoffianum">Arecastrum Romanzoffianum</option>';
-            Especie_options_str  += '<option value="Arecastrum romanzoffianum">Arecastrum romanzoffianum</option>';
-            Especie_options_str  += '<option value="Bauhinia purpurea">Bauhinia purpurea</option>';
-            Especie_options_str  += '<option value="Bismarckia nobilis">Bismarckia nobilis</option>';
-            Especie_options_str  += '<option value="Brachychiton populneus">Brachychiton populneus</option>';
-            Especie_options_str  += '<option value="Callistemon speciosus">Callistemon speciosus</option>';
-            Especie_options_str  += '<option value="Calocedrus decurrens">Calocedrus decurrens</option>';
-            Especie_options_str  += '<option value="Carya illinoinensis">Carya illinoinensis</option>';
-            Especie_options_str  += '<option value="Casuarina cunninghamiana">Casuarina cunninghamiana</option>';
-            Especie_options_str  += '<option value="Casuarina equisetifolia">Casuarina equisetifolia</option>';
-            Especie_options_str  += '<option value="Cedrus deodara">Cedrus deodara</option>';
-            Especie_options_str  += '<option value="Celtis australis">Celtis australis</option>';
-            Especie_options_str  += '<option value="Ceratonia siliqua">Ceratonia siliqua</option>';
-            Especie_options_str  += '<option value="Chamaecyparis lawsoniana">Chamaecyparis lawsoniana</option>';
-            Especie_options_str  += '<option value="Chamaerops humilis">Chamaerops humilis</option>';
-            Especie_options_str  += '<option value="Chorisia Speciosa">Chorisia Speciosa</option>';
-            Especie_options_str  += '<option value="Chorisia speciosa">Chorisia speciosa</option>';
-            Especie_options_str  += '<option value="Cinnamomum camphora">Cinnamomum camphora</option>';
-            Especie_options_str  += '<option value="Citrus × aurantium">Citrus × aurantium</option>';
-            Especie_options_str  += '<option value="Cupressus arizonica">Cupressus arizonica</option>';
-            Especie_options_str  += '<option value="Cupressus sempervirens">Cupressus sempervirens</option>';
-            Especie_options_str  += '<option value="Cupressus × leylandii">Cupressus × leylandii</option>';
-            Especie_options_str  += '<option value="Delonix regia">Delonix regia</option>';
-            Especie_options_str  += '<option value="Dracaena draco">Dracaena draco</option>';
-            Especie_options_str  += '<option value="Dypsis decaryi">Dypsis decaryi</option>';
-            Especie_options_str  += '<option value="Elaeagnus angustifolia">Elaeagnus angustifolia</option>';
-            Especie_options_str  += '<option value="Eucalyptus camaldulensis">Eucalyptus camaldulensis</option>';
-            Especie_options_str  += '<option value="Ficus benjamina">Ficus benjamina</option>';
-            Especie_options_str  += '<option value="Ficus carica">Ficus carica</option>';
-            Especie_options_str  += '<option value="Ficus elastica">Ficus elastica</option>';
-            Especie_options_str  += '<option value="Ficus lyrata">Ficus lyrata</option>';
-            Especie_options_str  += '<option value="Ficus macrophylla">Ficus macrophylla</option>';
-            Especie_options_str  += '<option value="Ficus mysorensis">Ficus mysorensis</option>';
-            Especie_options_str  += '<option value="Ficus nitida">Ficus nitida</option>';
-            Especie_options_str  += '<option value="Ficus rubiginosa">Ficus rubiginosa</option>';
-            Especie_options_str  += '<option value="Fraxinus angustifolia">Fraxinus angustifolia</option>';
-            Especie_options_str  += '<option value="Grevillea robusta">Grevillea robusta</option>';
-            Especie_options_str  += '<option value="Handroanthus impetiginosus">Handroanthus impetiginosus</option>';
-            Especie_options_str  += '<option value="Jacaranda mimosifolia">Jacaranda mimosifolia</option>';
-            Especie_options_str  += '<option value="Kentia Forsteriana">Kentia Forsteriana</option>';
-            Especie_options_str  += '<option value="Koelreuteria paniculata">Koelreuteria paniculata</option>';
-            Especie_options_str  += '<option value="Lagerstroemia indica">Lagerstroemia indica</option>';
-            Especie_options_str  += '<option value="Ligustrum japonicum">Ligustrum japonicum</option>';
-            Especie_options_str  += '<option value="Ligustrum lucidum">Ligustrum lucidum</option>';
-            Especie_options_str  += '<option value="Ligustrum vulgare">Ligustrum vulgare</option>';
-            Especie_options_str  += '<option value="Magnolia grandiflora">Magnolia grandiflora</option>';
-            Especie_options_str  += '<option value="Marra">Marra</option>';
-            Especie_options_str  += '<option value="Melia azedarach">Melia azedarach</option>';
-            Especie_options_str  += '<option value="Metrosideros excelsa">Metrosideros excelsa</option>';
-            Especie_options_str  += '<option value="Morus alba">Morus alba</option>';
-            Especie_options_str  += '<option value="Morus alba fruitless">Morus alba fruitless</option>';
-            Especie_options_str  += '<option value="Myoporum acuminatum">Myoporum acuminatum</option>';
-            Especie_options_str  += '<option value="Olea europaea">Olea europaea</option>';
-            Especie_options_str  += '<option value="Phoenix canariensis">Phoenix canariensis</option>';
-            Especie_options_str  += '<option value="Phoenix dactylifera">Phoenix dactylifera</option>';
-            Especie_options_str  += '<option value="Phoenix roebelenii">Phoenix roebelenii</option>';
-            Especie_options_str  += '<option value="Pinus halepensis">Pinus halepensis</option>';
-            Especie_options_str  += '<option value="Pinus pinea">Pinus pinea</option>';
-            Especie_options_str  += '<option value="Platanus × acerifolia">Platanus × acerifolia</option>';
-            Especie_options_str  += '<option value="Populus alba">Populus alba</option>';
-            Especie_options_str  += '<option value="Populus nigra">Populus nigra</option>';
-            Especie_options_str  += '<option value="Prunus cerasifera var. pissardii">Prunus cerasifera var. pissardii</option>';
-            Especie_options_str  += '<option value="Prunus dulcis">Prunus dulcis</option>';
-            Especie_options_str  += '<option value="Pyrus bourgaeana">Pyrus bourgaeana</option>';
-            Especie_options_str  += '<option value="Quercus coccifera">Quercus coccifera</option>';
-            Especie_options_str  += '<option value="Quercus ilex">Quercus ilex</option>';
-            Especie_options_str  += '<option value="Quercus rotundifolia">Quercus rotundifolia</option>';
-            Especie_options_str  += '<option value="Quercus suber">Quercus suber</option>';
-            Especie_options_str  += '<option value="Salix alba">Salix alba</option>';
-            Especie_options_str  += '<option value="Schefflera actinophylla">Schefflera actinophylla</option>';
-            Especie_options_str  += '<option value="Schefflera arboricola">Schefflera arboricola</option>';
-            Especie_options_str  += '<option value="Schinus molle">Schinus molle</option>';
-            Especie_options_str  += '<option value="Sophora japonica">Sophora japonica</option>';
-            Especie_options_str  += '<option value="Tamarix gallica">Tamarix gallica</option>';
-            Especie_options_str  += '<option value="Tamarix ramosissima">Tamarix ramosissima</option>';
-            Especie_options_str  += '<option value="Tipuana tipu">Tipuana tipu</option>';
-            Especie_options_str  += '<option value="Ulmus minor">Ulmus minor</option>';
-            Especie_options_str  += '<option value="Ulmus pumila">Ulmus pumila</option>';
-            Especie_options_str  += '<option value="Washingtonia filifera">Washingtonia filifera</option>';
-            Especie_options_str  += '<option value="Washingtonia robusta">Washingtonia robusta</option>';
-            sel_Especie.innerHTML = Especie_options_str;
-            div_Especie.appendChild(sel_Especie);
-            var lab_Especie = document.createElement('div');
-            lab_Especie.innerHTML = 'Especie';
-            lab_Especie.className = 'filterlabel';
-            div_Especie.appendChild(lab_Especie);
-            var reset_Especie = document.createElement('div');
-            reset_Especie.innerHTML = 'clear filter';
-            reset_Especie.className = 'filterlabel';
-            reset_Especie.onclick = function() {
-                var options = document.getElementById("sel_Especie").options;
-                for (var i=0; i < options.length; i++) {
-                    options[i].selected = false;
-                }
-                filterFunc();
-            };
-            div_Especie.appendChild(reset_Especie);
+            div_ESPECIE.appendChild(reset_ESPECIE);
             document.getElementById("menu").appendChild(
                 document.createElement("div"));
             var div_ACTUACIONPENDIENTE = document.createElement('div');
@@ -853,64 +742,27 @@
                 filterFunc();
             };
             div_ACTUACIONPENDIENTEZZVV.appendChild(reset_ACTUACIONPENDIENTEZZVV);
-        }
+        resetLabels([layer_ARBOLADO_4]);
+        map.on("zoomend", function(){
 
-        // Setup the map layout sections
-        var mapDiv = document.getElementById('map');
-        var row = document.createElement('div');
-        row.className="row";
-        row.id="all";
-        row.style.height = "100%";
-        var col1 = document.createElement('div');
-        col1.className="col9";
-        col1.id = "mapWindow";
-        col1.style.height = "99%";
-        col1.style.width = "80%";
-        col1.style.display = "inline-block";
-        var col2 = document.createElement('div');
-        col2.className="col3";
-        col2.id = "menu";
-        col2.style.display = "inline-block";
-        mapDiv.parentNode.insertBefore(row, mapDiv);
-        document.getElementById("all").appendChild(col1);
-        document.getElementById("all").appendChild(col2);
-        col1.appendChild(mapDiv)
-
-        // --- Original Authentication Logic (modified to use console for prompts/alerts) ---
-        window.onload = function(){
-          // Removed alert and confirm dialogs based on instructions.
-          // For demonstration, let's assume direct access or use a hidden form.
-          const checkCredentials = () => {
-            // In a real application, you'd use a more secure method than direct prompts.
-            const usuario = "1234"; // Replace with actual input if desired
-            const pass = "1234";   // Replace with actual input if desired
-
-            if(usuario === "1234" && pass === "1234"){
-              console.log("Acceso permitido");
-              const contenido = document.getElementById('contenidoProtegido');
-              if (contenido) {
-                  contenido.classList.add("visible");
-              }
-
-              // Force map recalculation repeatedly for 2 full seconds
-              let intentos = 0;
-              let recalculo = setInterval(function(){
-                map.invalidateSize();
-                intentos++;
-                if(intentos > 20){ clearInterval(recalculo); }
-              }, 100);
-
-            } else {
-              console.error("Datos incorrectos");
-            }
-          };
-
-          checkCredentials();
-        };
+                if (map.hasLayer(layer_ARBOLADO_4)) {
+                    if (map.getZoom() <= 19 && map.getZoom() >= 19) {
+                        layer_ARBOLADO_4.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_ARBOLADO_4.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_ARBOLADO_4]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_ARBOLADO_4]);
+        });
         </script>
-
-        <div id="logo-container" style="position: absolute; bottom: 1px; right: 10px; z-index: 700;">
-            <img src="data/logo.png" alt="Logo de la empresa" style="width: 320px; height: auto;">
-        </div>  
     </body>
 </html>
