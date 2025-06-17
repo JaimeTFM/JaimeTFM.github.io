@@ -109,12 +109,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function pop_ZONAS_VERDES_2(f, l) {
         const p = f.properties;
-        l.bindPopup(`<b>ID:</b> ${p.id_zv || '-'}<br><b>Tipo:</b> ${p.tipo_v || '-'}<br><b>Estado:</b> ${p.estado || '-'}`);
+        l.bindPopup(`<b>ID:</b> ${p.id_zv || '-'}<br><b>Nombre:</b> ${p.nombre || '-'}<br><b>Tipo:</b> ${p.tipo_v ||'-'}<br><b>Tipo riego:</b> ${p.riego ||'-'}<br><b>Área:</b> ${p.area || '-'}<br><b>Estado:</b> ${p.estado ||'-'}<br><b>Actuación pendiente:</b> ${p.actuacion_pendiente || '-'}`);
     }
 
     function pop_ARBOLADO_3(f, l) {
         const p = f.properties;
-        l.bindPopup(`<b>ID:</b> ${p.id || '-'}<br><b>Especie:</b> ${p.especie || '-'}<br><b>Altura:</b> ${p.altura || '-'}`);
+        l.bindPopup(`<b>ID:</b> ${p.id || '-'}<br><b>Especie:</b> ${p.especie || '-'}<br><b>Altura:</b> ${p.altura ||'-'}<br><b>Diam Tronco:</b> ${p.diam_tronco ||'-'}<br><b>Diam Copa:</b> ${p.diam_copa ||'-'}<br><b>Estado:</b> ${p.estado ||'-'}<br><b>Actuación pendiente:</b> ${p.actuacion_pendiente || '-'}`);
     }
 
     var layer_ARBOLADO, layer_ZONAS_VERDES;
@@ -293,13 +293,13 @@ setTimeout(() => {
   </div>
 <div id="leyenda-contenido" style="display:none;background:white;padding:10px;border:1px solid #ccc;border-top:none;font-size:13px;">
 <u>Arbolado</u><br/>
-<div><span style="display:inline-block;width:12px;height:12px;background:#21c221;border:1px solid #000;margin-right:4px;border-radius:50%;"></span>Ejecutado</div>
-<div><span style="display:inline-block;width:12px;height:12px;background:#de9d24;border:1px solid #000;margin-right:4px;border-radius:50%;"></span>Programado</div>
-<div><span style="display:inline-block;width:12px;height:12px;background:#ae0401;border:1px solid #000;margin-right:4px;border-radius:50%;"></span>Orden de ejecución</div>
+<div><span style="display:inline-block;width:12px;height:12px;background:#21c221;border:1px solid #white;margin-right:4px;border-radius:50%;"></span>Ejecutado</div>
+<div><span style="display:inline-block;width:12px;height:12px;background:#de9d24;border:1px solid #white;margin-right:4px;border-radius:50%;"></span>Programado</div>
+<div><span style="display:inline-block;width:12px;height:12px;background:#ae0401;border:1px solid #white;margin-right:4px;border-radius:50%;"></span>Orden de ejecución</div>
 <br/><u>Zonas Verdes</u><br/>
-<div><span style="display:inline-block;width:16px;height:12px;background:#21c221;border:1px solid #000;margin-right:4px;"></span>Ejecutado</div>
-<div><span style="display:inline-block;width:16px;height:12px;background:#de9d24;border:1px solid #000;margin-right:4px;"></span>Programado</div>
-<div><span style="display:inline-block;width:16px;height:12px;background:#ae0401;border:1px solid #000;margin-right:4px;"></span>Orden de ejecución</div>
+<div><span style="display:inline-block;width:16px;height:12px;background:#21c221;border:1px solid #white;margin-right:4px;"></span>Ejecutado</div>
+<div><span style="display:inline-block;width:16px;height:12px;background:#de9d24;border:1px solid #white;margin-right:4px;"></span>Programado</div>
+<div><span style="display:inline-block;width:16px;height:12px;background:#ae0401;border:1px solid #white;margin-right:4px;"></span>Orden de ejecución</div>
 </div>
 </div>
 <script>
