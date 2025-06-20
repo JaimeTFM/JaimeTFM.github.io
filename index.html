@@ -34,8 +34,8 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    var username = prompt("Introduce el usuario:");
-    var password = prompt("Introduce la contraseña:");
+    var username = prompt("Introduce el usuario (1234):");
+    var password = prompt("Introduce la contraseña (1234):");
     if (!(username === "1234" && password === "1234")) {
         alert("Acceso denegado.");
         document.body.innerHTML = "<h2 style='text-align:center;margin-top:20%;'>Acceso denegado.</h2>";
