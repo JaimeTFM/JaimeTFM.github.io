@@ -32,6 +32,18 @@
 </style></head>
 <body>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var username = prompt("Introduce el usuario:");
+    var password = prompt("Introduce la contraseña:");
+    if (!(username === "1234" && password === "1234")) {
+        alert("Acceso denegado.");
+        document.body.innerHTML = "<h2 style='text-align:center;margin-top:20%;'>Acceso denegado.</h2>";
+    }
+});
+</script>
+
+
 <div id="map">
 </div>
 <script src="js/qgis2web_expressions.js"></script>
